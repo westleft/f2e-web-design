@@ -1,73 +1,117 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { useIntersectionObserver } from "@/composables/observer";
+import { ref, onMounted } from "vue";
+import type { Ref } from "vue";
+
+const { createObserver } = useIntersectionObserver();
+
 const flip = ref(false);
 
-const cardArr = [
-  {
-    front: {
-      week: "1",
-      img: "@/assets/images/theme/locked.png",
-    },
-    back: {
-      tag: "板塊設計",
-      title: "The F2E 活動網站設計",
-      theme: "視覺滾動",
-    },
-  },{
-    front: {
-      week: "2",
-      img: ("@/assets/images/theme/locked.png"),
-    },
-    back: {
-      tag: "板塊設計",
-      title: "The F2E 活動網站設計",
-      theme: "視覺滾動",
-    },
-  },{
-    front: {
-      week: "3",
-      img: ("@/assets/images/theme/locked.png"),
-    },
-    back: {
-      tag: "板塊設計",
-      title: "The F2E 活動網站設計",
-      theme: "視覺滾動",
-    },
-  },
-];
+const showAnimation: Ref<Boolean> = ref(false);
+const pageDOM: Ref = ref();
+
+const options = {
+  root: null,
+  rootMargin: "0px",
+  threshold: 0.8,
+};
+
+const callback = (entries: IntersectionObserverEntry[]): void => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      flip.value = true;
+    }
+  });
+};
+
+onMounted(() => {
+  const observer = createObserver(callback, options);
+  observer.observe(pageDOM.value);
+});
+
 </script>
 
 <template>
-  <div id="theme-page">
-    <button @click="flip = true">test</button>
-    <!-- <h2 class="theme-title">年度最強合作 三大主題來襲</h2> -->
+  <div id="theme-page" ref="pageDOM">
+    <!-- <button @click="flip = true">test</button> -->
+    <h2 class="theme-title">年度最強合作 三大主題來襲</h2>
     <p class="theme-text">
       各路廠商強強聯手<br />
       共同設計出接地氣的網頁互動挑戰關卡
     </p>
 
     <div class="theme-cards">
-      <div :class="['card', { 'flip-card': flip }]" v-for="item in cardArr" :key="item.tag">
+      <div :class="['card', { 'flip-card': flip }]">
         <div class="front-card">
-          <p class="card-text">Week {{ item.front.week }}</p>
+          <p class="card-text">Week 1</p>
           <img
             class="card-img"
-            :src="item.front.img"
+            src="@/assets/images/theme/locked.png"
             alt="鎖頭圖"
           />
         </div>
 
         <div v-if="flip" class="back-card">
-          <p class="back-card-tag"># {{ item.back.tag }}</p>
-          <h3 class="back-card-title">{{ item.back.title }}</h3>
-          <p class="back-card-theme">{{ item.back.theme }}</p>
+          <p class="back-card-tag"># 板塊設計</p>
+          <h3 class="back-card-title">The F2E 活動網站設計</h3>
+          <p class="back-card-theme">視覺滾動</p>
           <img
             class="back-card-img"
             src="@/assets/images/theme/theme_card1.png"
             alt=""
           />
           <div class="back-card-container">
-            <p class="back-card-text-week">Week {{ item.front.week }}</p>
+            <p class="back-card-text-week">Week 1</p>
+            <p class="back-card-text-detail">查看關卡細節</p>
+          </div>
+        </div>
+      </div>
+      <div :class="['card', { 'flip-card': flip }]">
+        <div class="front-card">
+          <p class="card-text">Week 2</p>
+          <img
+            class="card-img"
+            src="@/assets/images/theme/locked.png"
+            alt="鎖頭圖"
+          />
+        </div>
+
+        <div v-if="flip" class="back-card">
+          <p class="back-card-tag"># 凱鈿行動科技</p>
+          <h3 class="back-card-title">今晚，我想來點點簽</h3>
+          <p class="back-card-theme">CANVAS</p>
+          <img
+            class="back-card-img"
+            src="@/assets/images/theme/theme_card2.png"
+            alt=""
+          />
+          <div class="back-card-container">
+            <p class="back-card-text-week">Week 2</p>
+            <p class="back-card-text-detail">查看關卡細節</p>
+          </div>
+        </div>
+      </div>
+      <div :class="['card', { 'flip-card': flip }]">
+        <div class="front-card">
+          <p class="card-text">Week 1</p>
+          <img
+            class="card-img"
+            src="@/assets/images/theme/locked.png"
+            alt="鎖頭圖"
+          />
+        </div>
+
+        <div v-if="flip" class="back-card">
+          <p class="back-card-tag"># 鈦坦科技</p>
+          <h3 class="back-card-title">Scrum 新手村</h3>
+          <p class="back-card-theme">JS Draggable</p>
+          <img
+            class="back-card-img"
+            src="@/assets/images/theme/theme_card3.png"
+            alt=""
+          />
+          <div class="back-card-container">
+            <p class="back-card-text-week">Week 3</p>
             <p class="back-card-text-detail">查看關卡細節</p>
           </div>
         </div>
@@ -97,14 +141,14 @@ const cardArr = [
     font-family: Noto Sans CJK;
     color: #fff;
     line-height: 140%;
-    padding: 2vh 0;
+    padding: 8vh 0;
     letter-spacing: 0.2vw;
     text-align: center;
   }
 }
 
 .theme-cards {
-  width: 40%;
+  width: 60vw;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 4%;
@@ -120,7 +164,7 @@ const cardArr = [
     transform-style: preserve-3d;
     position: relative;
     background: linear-gradient(180deg, #9da4ff 0%, #6e77e9 100%);
-    height: 32vh;
+    // height: 32vh;
   }
 }
 
@@ -129,20 +173,20 @@ const cardArr = [
   border-radius: 32px;
   width: 100%;
   height: 100%;
-  padding: 2% 4%;
+  padding: 6% 4% 12%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   flex-direction: column;
 
   > .card-text {
     font-family: Monument Extended;
-    font-size: 1.2vw;
+    font-size: 1.6vw;
     letter-spacing: 0.1vw;
     color: #fff;
-    padding: 6%;
+    padding: 6% 0 12%;
   }
   > .card-img {
-    width: 60%;
+    width: 70%;
   }
 }
 
@@ -153,7 +197,7 @@ const cardArr = [
   flex-direction: column;
   width: 100%;
   height: 100%;
-  padding: 2% 4%;
+  padding: 6% 8% 8%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   -webkit-transform: rotateY(180deg);
@@ -166,12 +210,15 @@ const cardArr = [
     font-size: 0.8vw;
     background-color: #83fac1;
     color: #06102b;
-    border-radius: 4px;
-    padding: 0.2vh 0.4vw;
+    border-radius: 8px;
+    padding: 0.8vh 0.4vw;
+    line-height: 140%;
+    font-weight: 700;
   }
 
   .back-card-img {
     height: 8vh;
+    padding: 2% 0;
   }
 
   .back-card-title {
@@ -180,11 +227,13 @@ const cardArr = [
     font-weight: 700;
     padding: 2vh 0;
     letter-spacing: 0.1vw;
+    font-size: 1.2vw;
   }
 
   .back-card-theme {
     font-family: "Noto Sans CJK";
     color: #6e77e9;
+    font-size: 0.8vw;
   }
 
   .back-card-img {
@@ -196,15 +245,19 @@ const cardArr = [
   .back-card-container {
     @include flex(center, space-between);
     width: 100%;
+    
     > .back-card-text-week {
+      font-family: Monument Extended;
       color: #c4c8ff;
-      font-size: 0.8vw;
+      font-size: 0.6vw;
+
     }
     > .back-card-text-detail {
       @include flex();
+      font-family: "Noto Sans CJK";
       color: #6e77e9;
       font-weight: 700;
-      font-size: 0.8vw;
+      font-size: 0.6vw;
       &::after {
         @include flex();
         content: "";

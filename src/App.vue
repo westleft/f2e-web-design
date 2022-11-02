@@ -3,6 +3,8 @@ import FrontPage from "@/views/FrontPage.vue";
 import PainPoints from "@/views/PainPoints.vue";
 import IntroducePage from "@/views/IntroducePage.vue";
 import ThemePage from "@/views/ThemePage.vue";
+import InstructionsPage from "@/views/InstructionsPage.vue";
+import BonusPage from "@/views/BonusPage.vue";
 
 import { onMounted, ref } from "vue";
 import type { Ref } from "vue";
@@ -30,6 +32,8 @@ const currentView: Ref<number> = ref(0);
   <PainPoints />
   <IntroducePage />
   <ThemePage />
+  <InstructionsPage />
+  <BonusPage />
 </template>
 
 <style lang="scss">
