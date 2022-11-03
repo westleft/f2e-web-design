@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from "@/composables/observer";
-import { ref, onMounted } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import type { Ref } from "vue";
+import { rejects } from "assert";
 
-const { createObserver } = useIntersectionObserver();
+const showCard2: Ref<boolean> = ref(false);
+const showCard3: Ref<boolean> = ref(false);
 
-const flip = ref(false);
-
-const showAnimation: Ref<Boolean> = ref(false);
-const pageDOM: Ref = ref();
+const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
 const options = {
   root: null,
@@ -16,19 +15,23 @@ const options = {
   threshold: 0.8,
 };
 
-const callback = (entries: IntersectionObserverEntry[]): void => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      flip.value = true;
-    }
-  });
+const activeCallback = () => {
+  showAnimation.value = true;
+  createTimer(800, showCard2);
+  createTimer(1600, showCard3);
 };
 
 onMounted(() => {
-  const observer = createObserver(callback, options);
+  const observer = createObserver(options, activeCallback);
   observer.observe(pageDOM.value);
 });
 
+const createTimer = (time: number, showValue: Ref<boolean>) => {
+    let timer = setTimeout(() => {
+      showValue.value = true
+      clearTimeout(timer)
+    }, time)
+}
 </script>
 
 <template>
@@ -41,7 +44,7 @@ onMounted(() => {
     </p>
 
     <div class="theme-cards">
-      <div :class="['card', { 'flip-card': flip }]">
+      <div :class="['card','card1', { 'flip-card': showAnimation }]">
         <div class="front-card">
           <p class="card-text">Week 1</p>
           <img
@@ -51,7 +54,7 @@ onMounted(() => {
           />
         </div>
 
-        <div v-if="flip" class="back-card">
+        <div v-if="showAnimation" class="back-card">
           <p class="back-card-tag"># 板塊設計</p>
           <h3 class="back-card-title">The F2E 活動網站設計</h3>
           <p class="back-card-theme">視覺滾動</p>
@@ -66,7 +69,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div :class="['card', { 'flip-card': flip }]">
+      <div :class="['card', { 'flip-card': showCard2 }]">
         <div class="front-card">
           <p class="card-text">Week 2</p>
           <img
@@ -76,7 +79,7 @@ onMounted(() => {
           />
         </div>
 
-        <div v-if="flip" class="back-card">
+        <div v-if="showCard2" class="back-card">
           <p class="back-card-tag"># 凱鈿行動科技</p>
           <h3 class="back-card-title">今晚，我想來點點簽</h3>
           <p class="back-card-theme">CANVAS</p>
@@ -91,9 +94,9 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div :class="['card', { 'flip-card': flip }]">
+      <div :class="['card', { 'flip-card': showCard3 }]">
         <div class="front-card">
-          <p class="card-text">Week 1</p>
+          <p class="card-text">Week 3</p>
           <img
             class="card-img"
             src="@/assets/images/theme/locked.png"
@@ -101,7 +104,7 @@ onMounted(() => {
           />
         </div>
 
-        <div v-if="flip" class="back-card">
+        <div v-if="showCard3" class="back-card">
           <p class="back-card-tag"># 鈦坦科技</p>
           <h3 class="back-card-title">Scrum 新手村</h3>
           <p class="back-card-theme">JS Draggable</p>

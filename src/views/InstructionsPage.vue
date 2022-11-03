@@ -1,7 +1,26 @@
 <script setup lang="ts">
+import { onMounted, onUnmounted, ref } from "vue";
+import { useIntersectionObserver } from "@/composables/observer";
+const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
+
+const options = {
+  root: null,
+  rootMargin: "0px",
+  threshold: 0.1,
+};
+
+const activeCallback = () => {
+  showAnimation.value = true;
+};
+
+onMounted(() => {
+  const observer = createObserver(options, activeCallback);
+  observer.observe(pageDOM.value);
+});
 </script>
+
 <template>
-  <div id="InstructionsPage">
+  <div id="InstructionsPage" ref="pageDOM">
     <div class="title-box">
       <img
         class="title-img"
@@ -16,63 +35,68 @@
       />
     </div>
 
-    <ul class="setps">
-      <li class="step step1">
-        <img
-          class="step-img"
-          src="@/assets/images/instructions/step1.png"
-          alt=""
-        />
-        <div class="step-content">
-          <h3 class="step-title">開放報名</h3>
-          <p class="step-text"><span>10/13 </span>(四) 早上 11:00</p>
-          <div class="line"></div>
-          <p class="step-text"><span>10/30 </span>(日) 晚上 23:59</p>
-          <p class="step-sub">截止前可修改報名組別</p>
-        </div>
-      </li>
-      <li class="step step2">
-        <div class="step-content">
-          <h3 class="step-title">各組別開賽</h3>
-          <p class="step-text"><span>10/31 </span>UI組、團體組開賽</p>
-          <p class="step-text"><span>11/07 </span>前端組開賽</p>
-          <p class="step-sub">
-            前端工程師可採用<br />
-            UI 設計師的設計稿產出完<br />整作品
-          </p>
-        </div>
-        <img
-          class="step-img"
-          src="@/assets/images/instructions/step2.png"
-          alt=""
-        />
-      </li>
-      <li class="step step3">
-        <img
-          class="step-img"
-          src="@/assets/images/instructions/step3.png"
-          alt=""
-        />
-        <div class="step-content">
-          <h3 class="step-title">登錄作品</h3>
-          <p class="step-text"><span>10/31 </span>(一) 中午 12:00</p>
-          <div class="line"></div>
-          <p class="step-text"><span>11/28 </span>(一) 中午 12:00</p>
-          <p class="step-sub">依賽程登錄作品</p>
-        </div>
-      </li>
-      <li class="step step4">
-        <div class="step-content">
-          <h3 class="step-title">線上直播</h3>
-          <p class="step-text"><span>11/03 - 11/24 </span>每週四</p>
-        </div>
-        <img
-          class="step-img"
-          src="@/assets/images/instructions/step4.png"
-          alt=""
-        />
-      </li>
-    </ul>
+    <Transition>
+      <ul v-if="showAnimation" class="setps">
+        <li class="step step1">
+          <img
+            class="step-img"
+            src="@/assets/images/instructions/step1.png"
+            alt=""
+          />
+          <div class="step-content">
+            <h3 class="step-title">開放報名</h3>
+            <p class="step-text"><span>10/13 </span>(四) 早上 11:00</p>
+            <div class="line"></div>
+            <p class="step-text"><span>10/30 </span>(日) 晚上 23:59</p>
+            <p class="step-sub">截止前可修改報名組別</p>
+          </div>
+          <img class="step-arrow" src="@/assets/images/instructions/arrow.png" alt="">
+        </li>
+        <li class="step step2">
+          <div class="step-content">
+            <h3 class="step-title">各組別開賽</h3>
+            <p class="step-text"><span>10/31 </span>UI組、團體組開賽</p>
+            <p class="step-text"><span>11/07 </span>前端組開賽</p>
+            <p class="step-sub">
+              前端工程師可採用<br />
+              UI 設計師的設計稿產出完<br />整作品
+            </p>
+          </div>
+          <img
+            class="step-img"
+            src="@/assets/images/instructions/step2.png"
+            alt=""
+          />
+          <img class="step-arrow" src="@/assets/images/instructions/arrow.png" alt="">
+        </li>
+        <li class="step step3">
+          <img
+            class="step-img"
+            src="@/assets/images/instructions/step3.png"
+            alt=""
+          />
+          <div class="step-content">
+            <h3 class="step-title">登錄作品</h3>
+            <p class="step-text"><span>10/31 </span>(一) 中午 12:00</p>
+            <div class="line"></div>
+            <p class="step-text"><span>11/28 </span>(一) 中午 12:00</p>
+            <p class="step-sub">依賽程登錄作品</p>
+          </div>
+          <img class="step-arrow" src="@/assets/images/instructions/arrow.png" alt="">
+        </li>
+        <li class="step step4">
+          <div class="step-content">
+            <h3 class="step-title">線上直播</h3>
+            <p class="step-text"><span>11/03 - 11/24 </span>每週四</p>
+          </div>
+          <img
+            class="step-img"
+            src="@/assets/images/instructions/step4.png"
+            alt=""
+          />
+        </li>
+      </ul>
+    </Transition>
   </div>
 </template>
 <style lang="scss" scoped>
@@ -117,6 +141,7 @@
     padding: 8% 4%;
     height: 36vh;
     transition: 0.2s;
+    position: relative;
     cursor: pointer;
     > .step-img {
       width: 20%;
@@ -160,6 +185,11 @@
       }
     }
 
+    > .step-arrow {
+      position: absolute;
+      width: 4vw;
+    }
+
     &:hover {
       border: 2px solid #9da4ff;
       box-shadow: 0px 0px 10px rgba(157, 164, 255, 0.6);
@@ -174,13 +204,28 @@
   }
   .step1 {
     grid-area: step1;
+    > .step-arrow {
+      top: 50%;
+      transform: translateY(-50%);
+      left: 101%;
+    }
   }
   .step2 {
     grid-area: step2;
     padding: 4%;
+    > .step-arrow {
+      margin: auto 0;
+      transform:rotate(90deg);
+      top: 98%;
+    }
   }
   .step3 {
     grid-area: step3;
+    > .step-arrow {
+      top: 50%;
+      transform: translateY(-50%) rotate(180deg);
+      right: 101%;
+    }
   }
   .step4 {
     grid-area: step4;
@@ -191,5 +236,15 @@
       }
     }
   }
+}
+
+.v-enter-active {
+  transition: all 2s ease-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateY(20%);
+  opacity: 0;
 }
 </style>

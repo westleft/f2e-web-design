@@ -3,10 +3,7 @@ import { useIntersectionObserver } from "@/composables/observer";
 import { onMounted, ref } from "vue";
 import type { Ref } from "vue";
 
-const { createObserver } = useIntersectionObserver();
-
-const showAnimation: Ref<Boolean> = ref(false);
-const pageDOM: Ref = ref();
+const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
 const options = {
   root: null,
@@ -14,16 +11,12 @@ const options = {
   threshold: 0.2,
 };
 
-const callback = (entries: IntersectionObserverEntry[]): void => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      showAnimation.value = true;
-    }
-  });
+const activeCallback = () => {
+  showAnimation.value = true;
 };
 
 onMounted(() => {
-  const observer = createObserver(callback, options);
+  const observer = createObserver(options, activeCallback);
   observer.observe(pageDOM.value);
 });
 </script>
@@ -44,38 +37,53 @@ onMounted(() => {
 
     <div class="page-main-content">
       <div class="main-text-box">
+        <Transition name="main-img">
         <img
-          :class="['main-img', { 'main-img-animation': showAnimation }]"
+          v-if="showAnimation"
+          :class="['main-img']"
           src="@/assets/images/introduce/title_img.png"
           alt="主標題圖片"
         />
+        </Transition>
         <!-- <h2 :class="['main-title', { 'main-title-animation': showAnimation }]">互動式<br /> 網頁設計</h2> -->
       </div>
-      <p :class="['sub-text', { 'sub-text-animation': showAnimation }]">
+      <Transition name="main-img">
+      <p v-if="showAnimation" class="sub-text">
         前端工程師 <span>✕</span> UI設計師
       </p>
-      <img
-        :class="['main-img-left-hand', { 'left-hand-animation': showAnimation }]"
-        src="@/assets/images/introduce/left_hand.png"
-        alt="左手圖"
-      />
-
-      <img
-        :class="['main-img-right-hand',{ 'right-hand-animation': showAnimation }]"
-        src="@/assets/images/introduce/right_hand.png"
-        alt="右手圖"
-      />
-
-      <img
-        :class="['main-img-purple-coin',{ 'pruple-coin-animation': showAnimation }]"
-        src="@/assets/images/introduce/purple_coin.png"
-        alt="紫色硬幣圖"
-      />
-      <img
-        :class="['img-yellow-coin', { 'yellow-coin-animation': showAnimation }]"
-        src="@/assets/images/introduce/yellow_coin.png"
-        alt="黃色硬幣圖"
-      />
+      </Transition>
+      <Transition name="left-hand">
+        <img
+          v-if="showAnimation"
+          class="main-img-left-hand"
+          src="@/assets/images/introduce/left_hand.png"
+          alt="左手圖"
+        />
+      </Transition>
+      <Transition name="right-hand">
+        <img
+          v-if="showAnimation"
+          class="main-img-right-hand"
+          src="@/assets/images/introduce/right_hand.png"
+          alt="右手圖"
+        />
+      </Transition>
+      <Transition name="purple-coin">
+        <img
+          v-if="showAnimation"
+          class="main-img-purple-coin"
+          src="@/assets/images/introduce/purple_coin.png"
+          alt="紫色硬幣圖"
+        />
+      </Transition>
+      <Transition name="yellow-coin">
+        <img
+          v-if="showAnimation"
+          class="img-yellow-coin"
+          src="@/assets/images/introduce/yellow_coin.png"
+          alt="黃色硬幣圖"
+        />
+      </Transition>
     </div>
 
     <div class="page-bar">
@@ -209,44 +217,58 @@ onMounted(() => {
   }
 }
 
-.main-img-animation {
-  animation: 2s ease-in-out main-img-animation;
+.main-img-enter-active,
+.sub-text-enter-active, 
+.right-hand-enter-active, 
+.left-hand-enter-active,
+.yellow-coin-enter-active,
+.purple-coin-enter-active {
+  transition: all 2s ease-in-out;
 }
 
-.main-title-animation {
-  animation: 2s ease-in-out main-title-animation;
+
+
+.main-img-enter-from,
+.main-img-leave-to {
+  transform: scale(0);
+  opacity: 0;
 }
 
-.sub-text-animation {
-  animation: 2s ease-in-out sub-text-animation;
+.sub-text-enter-from,
+.sub-text-leave-to {
+  opacity: 0;
+  font-size: 0vw;
 }
 
-.right-hand-animation {
-  animation: 2s ease-in-out right-hand-animation;
-}
+// .main-title-animation {
+//   animation: 2s ease-in-out main-title-animation;
+// }
 
-.left-hand-animation {
-  animation: 2s ease-in-out left-hand-animation;
-}
-
-.pruple-coin-animation {
-  animation: 2s ease-in-out purple-coin-animation;
-}
-
-.yellow-coin-animation {
-  animation: 2s ease-in-out yellow-coin-animation;
-}
-
-@keyframes main-img-animation {
-  0% {
+.right-hand-enter-from,
+.right-hand-leave-to {
     opacity: 0;
-    width: 0vw;
-  }
-  100% {
-    opacity: 1;
-    width: 28vw;
-  }
+    transform: translateX(-100%) rotate(-20deg);
+    // right: -40%;
 }
+
+.left-hand-enter-from,
+.left-hand-leave-to {
+    transform: translateX(100%) rotate(20deg);
+    opacity: 0;
+}
+
+.purple-coin-enter-from,
+.purple-coin-leave-to {
+  transform: rotate(20deg) translate(200%, -200%);
+}
+
+.yellow-coin-enter-from,
+.yellow-coin-leave-to {
+  transform: rotate(-120deg) translate(-80%, 50%);
+}
+
+
+
 
 @keyframes main-title-animation {
   0% {
@@ -259,66 +281,5 @@ onMounted(() => {
   }
 }
 
-@keyframes sub-text-animation {
-  0% {
-    opacity: 0;
-    font-size: 0vw;
-  }
-  100% {
-    opacity: 1;
-    font-size: 1.2vw;
-  }
-}
 
-@keyframes right-hand-animation {
-  0% {
-    transform: rotate(-20deg);
-    opacity: 0;
-    right: 40%;
-  }
-  100% {
-    transform: rotate(0);
-    opacity: 1;
-    right: 24%;
-  }
-}
-
-@keyframes left-hand-animation {
-  0% {
-    transform: rotate(20deg);
-    opacity: 0;
-    left: 40%;
-  }
-  100% {
-    transform: rotate(0);
-    opacity: 1;
-    left: 24%;
-  }
-}
-
-@keyframes purple-coin-animation {
-  0% {
-    transform: rotate(120deg);
-    top: -12vh;
-    right: 28vw;
-  }
-  100% {
-    transform: rotate(0);
-    top: 0vh;
-    right: 32vw;
-  }
-}
-
-@keyframes yellow-coin-animation {
-  0% {
-    transform: rotate(-120deg);
-    bottom: -28vh;
-    left: 4%;
-  }
-  100% {
-    transform: rotate(0);
-    bottom: -8vh;
-    left: 20%;
-  }
-}
 </style>

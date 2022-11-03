@@ -1,37 +1,26 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import type { Ref } from "vue";
-import { observerOptions } from "@/interfaces/";
+import { onMounted } from "vue";
 import { useIntersectionObserver } from "@/composables/observer";
-const { createObserver } = useIntersectionObserver();
+const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
-const showAnimation: Ref<boolean> = ref(false);
-const ob = ref() as Ref<HTMLElement>;
 const options = {
   root: null,
   rootMargin: "0px",
-  threshold: 0.5,
+  threshold: 0.1,
 };
-const pageCallBack = (entries: IntersectionObserverEntry[]): void => {
-  entries.forEach((item) => {
-    if (item.isIntersecting) {
-      // window.scrollTo({
-      //   top: ob.value.offsetTop,
-      //   behavior: "smooth"
-      // })
-      showAnimation.value = true;
-    }
-  });
+
+const activeCallback = () => {
+  showAnimation.value = true;
 };
 
 onMounted(() => {
-  const observer = createObserver(pageCallBack, options);
-  observer.observe(ob.value);
+  const observer = createObserver(options, activeCallback);
+  observer.observe(pageDOM.value);
 });
 </script>
 
 <template>
-  <div id="paint-points" ref="ob">
+  <div id="paint-points" ref="pageDOM">
     <Transition name="bounce">
       <section v-show="showAnimation" class="chat-section">
         <img class="chat-img img-boom" src="@/assets/images/pain/boom.png" alt="" />
@@ -124,7 +113,6 @@ onMounted(() => {
       &.img-question {
         right: 12vw;
         top: 0;
-        transition-delay: 0.5s;
       }
       &.img-exclamation {
         left: 4vw;

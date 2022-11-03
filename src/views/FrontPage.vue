@@ -1,80 +1,22 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import type { Ref } from "vue";
+import { useIntersectionObserver } from "@/composables/observer";
+const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
-interface observerOptions {
-  root: null | HTMLElement;
-  rootMargin: string;
-  threshold: number;
-}
+const options = {
+  root: null,
+  rootMargin: "0px",
+  threshold: 0.0,
+};
 
-class ObserverUnit {
-  private domArr: Ref;
-  private imgDOM: Function;
-  private options: observerOptions;
-  private observer: IntersectionObserver;
-
-  constructor() {
-    this.domArr = ref([]);
-    this.imgDOM = (el: HTMLElement) => {
-      (this.domArr.value as Array<HTMLElement>).push(el); // 逐一將節點加進 imgDOM
-    };
-
-    this.options = {
-      root: null,
-      rootMargin: "0px 0px 0px 0px",
-      threshold: 0.0,
-    };
-    this.observer = this.createObserver();
-  }
-
-  // 建立觀察器
-  private createObserver() {
-    return new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("front-animation");
-          entry.target.addEventListener("animationend",() => {
-              entry.target.classList.remove("front-animation");
-              entry.target.classList.add("img-anima");
-            }, { once: true });
-        }
-      });
-    }, this.options);
-  }
-
-  // 開始觀察
-  public startObserver() {
-    this.domArr.value.forEach((item: HTMLElement) => {
-      this.observer.observe(item);
-    });
-  }
-
-  // 取消觀察
-  public removeObserver() {
-    this.domArr.value.forEach((item: HTMLElement) => {
-      this.observer.unobserve(item);
-    });
-  }
-}
+const activeCallback = () => {
+  showAnimation.value = true;
+};
 
 onMounted(() => {
-  observerUnit.startObserver();
+  const observer = createObserver(options, activeCallback);
+  observer.observe(pageDOM.value);
 });
-
-onUnmounted(() => {
-  observerUnit.removeObserver();
-});
-
-const observerUnit = new ObserverUnit();
-
-const pageDOM = ref()
-
-onMounted(() => {
-    // console.log(pageDOM.value.offsetTop)
-})
-
-
 </script>
 
 <template>
@@ -94,12 +36,14 @@ onMounted(() => {
     </div>
 
     <section class="front-content">
-      <img
-        :ref="observerUnit.imgDOM"
-        class="front-img-code"
-        src="@/assets/images/front_code.png"
-        alt=""
-      />
+      <Transition>
+        <img
+          v-if="showAnimation"
+          class="front-img-code"
+          src="@/assets/images/front_code.png"
+          alt=""
+        />
+      </Transition>
       <img class="front-img-list" src="@/assets/images/front_list.png" alt="" />
       <img
         class="front-img-list2"
@@ -107,17 +51,23 @@ onMounted(() => {
         alt=""
       />
       <div class="front_content_inner">
-        <h1 class="front-title" :ref="observerUnit.imgDOM">THE F2E</h1>
+        <Transition>
+          <h1 v-if="showAnimation" class="front-title">THE F2E</h1>
+        </Transition>
         <p class="front-sub-title">互動式網頁設計</p>
         <button class="front-cta-btn">立即報名</button>
       </div>
-      <p class="front-text-4th" :ref="observerUnit.imgDOM">4TH</p>
-      <img
-        :ref="observerUnit.imgDOM"
-        class="front-img-dash"
-        src="@/assets/images/front_dashboard.png"
-        alt=""
-      />
+      <Transition>
+        <p v-if="showAnimation" class="front-text-4th">4TH</p>
+      </Transition>
+      <Transition>
+        <img
+          v-if="showAnimation"
+          class="front-img-dash"
+          src="@/assets/images/front_dashboard.png"
+          alt=""
+        />
+      </Transition>
     </section>
 
     <section class="front-marquee">
@@ -135,13 +85,13 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 #front-page {
-  @include size(101vh, 100vw);
+  @include size(100vh, 100vw);
   @include flex(center, flex-start);
   flex-direction: column;
   background-color: $color-bg;
   overflow-x: hidden;
   box-sizing: border-box;
-  
+  position: relative;
   #header {
     @include flex(center, space-between);
     width: 100vw;
@@ -234,11 +184,13 @@ onMounted(() => {
     > img {
       position: absolute;
       &.front-img-code {
+        animation: img-anima 4s infinite ease-in-out;
         width: 12vw;
         left: 0;
         top: 16vh;
       }
       &.front-img-dash {
+        animation: img-anima 4s infinite ease-in-out;
         width: 16vw;
         right: 4vw;
         bottom: 12vh;
@@ -324,15 +276,14 @@ onMounted(() => {
   }
 }
 
-@keyframes front-img-anima {
-  0% {
-    opacity: 0;
-    transform: translateY(20%);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.v-enter-active {
+  transition: all 1s ease-in-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  transform: translateY(4vh);
+  opacity: 0;
 }
 
 // 常駐動畫
@@ -343,7 +294,6 @@ onMounted(() => {
   50% {
     transform: translateY(4%);
   }
-
   100% {
     transform: translateY(0%);
   }
