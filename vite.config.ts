@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/f2e-web-design/',
   plugins: [vue()],
   resolve: {
     alias: {

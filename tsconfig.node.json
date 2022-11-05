@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    // "baseUrl": "./f2e-web-design/",
+    "paths": { "@/*":["./src/*"] },
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",

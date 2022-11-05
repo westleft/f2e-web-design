@@ -17,8 +17,8 @@ const options = {
 
 const activeCallback = () => {
   showAnimation.value = true;
-  createTimer(800, showCard2);
-  createTimer(1600, showCard3);
+  createTimer(600, showCard2);
+  createTimer(1200, showCard3);
 };
 
 onMounted(() => {

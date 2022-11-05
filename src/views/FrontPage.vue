@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { inject, onMounted, onUnmounted, ref } from "vue";
 import { useIntersectionObserver } from "@/composables/observer";
 const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
@@ -17,6 +17,10 @@ onMounted(() => {
   const observer = createObserver(options, activeCallback);
   observer.observe(pageDOM.value);
 });
+
+function qq(){
+  console.log('qq')
+}
 </script>
 
 <template>
@@ -28,9 +32,15 @@ onMounted(() => {
         class="header-logo"
       />
       <ul class="header-list">
-        <li class="list-item"><p class="list-item-text">關卡資訊</p></li>
-        <li class="list-item"><p class="list-item-text">攻略資源</p></li>
-        <li class="list-item"><p class="list-item-text">求職專區</p></li>
+        <li class="list-item">
+          <a class="list-item-text" target="_blank" href="https://2022.thef2e.com/news">關卡資訊</a>
+        </li>
+        <li class="list-item">
+          <a class="list-item-text" target="_blank" href="https://hackmd.io/ofJD4K7iSI65V19zxC7d0w">攻略資源</a>
+        </li>
+        <li class="list-item">
+          <a class="list-item-text" target="_blank" href="https://2022.thef2e.com/jobs">求職專區</a>
+        </li>
         <li class="list-item"><button class="list-item-btn">登入</button></li>
       </ul>
     </div>
@@ -109,17 +119,45 @@ onMounted(() => {
       > .list-item {
         padding: 0 1vw;
         > .list-item-text {
+          @include flex();
+          position: relative;
+          flex-direction: column;
           color: #858993;
-          font-size: 0.8vw;
+          font-size: 1vw;
           cursor: pointer;
+          transition: 0.5s;
+          text-decoration: none;
+          &::after {
+            @include size(4px, 12px);
+            position: absolute;
+            content: "";
+            background-color: #55ffad;
+            border-radius: 8px;
+            bottom: -2vh;
+            opacity: 0;
+          }
+          &:hover {
+            color: #FFFFFF;
+            text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.6);
+            &::after {
+              opacity: 1;
+            }
+          }
         }
         > .list-item-btn {
           background-color: $color-bg;
           border-radius: 40px;
-          border: solid 2px #fff;
-          padding: 0.5vh 1vw;
+          border: solid 1px #fff;
+          padding: 0.8vh 1.2vw;
           color: #ffffff;
           cursor: pointer;
+          transition: 0.5s;
+          &:hover {
+            border: 1px solid #55FFAD;
+            color: #55FFAD;
+            box-shadow: 0px 0px 10px rgba(85, 255, 173, 0.6);
+            background: rgba(85, 255, 173, 0.2);
+          }
         }
       }
     }
@@ -178,6 +216,11 @@ onMounted(() => {
         font-size: 1.2vw;
         margin-top: 12%;
         cursor: pointer;
+        transition: 0.5s;
+        &:hover {
+          background: #FFF385;
+          box-shadow: 0px 0px 10px rgba(255, 243, 133, 0.6);
+        }
       }
     }
 
