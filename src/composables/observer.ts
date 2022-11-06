@@ -1,4 +1,3 @@
-
 import { observerOptions } from "@/interfaces/"
 import { ref } from "vue";
 import type { Ref } from "vue";

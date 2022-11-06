@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Mousewheel, Pagination } from "swiper";
+import { Mousewheel } from "swiper";
+import { provide, ref } from "vue";
+import type { Ref } from "vue";
 
 import FrontPage from "@/views/FrontPage.vue";
 import PainPoints from "@/views/PainPoints.vue";
@@ -11,11 +13,9 @@ import InstructionsPage from "@/views/InstructionsPage.vue";
 import BonusPage from "@/views/BonusPage.vue";
 import QuestionPage from "@/views/QuestionPage.vue";
 
-import { onMounted, provide, ref } from "vue";
-import type { Ref } from "vue";
-
 const modules = [Mousewheel];
 
+// 決定是否顯示 slider
 const hideSlide = ref(false);
 provide("hideSlide", hideSlide);
 

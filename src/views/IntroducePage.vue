@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from "@/composables/observer";
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import type { Ref } from "vue";
 
 const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();

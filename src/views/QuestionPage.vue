@@ -18,10 +18,6 @@ const listArr = [
 ];
 
 window.addEventListener("mousewheel", (event: any) => {
-  // if (window.scrollY === 0) {
-  //   hideSlide.value = false;
-  // }
-
   if (window.scrollY === 0 && event.wheelDelta > 0) {
     hideSlide.value = false;
   }
@@ -71,7 +67,7 @@ const chanheType = (type: string) => {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 20% 24% 0 24%;
+  padding: 4% 24% 0 24%;
   > .qa-title {
     font-family: "Monument Extended";
     font-size: 2vw;

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { useIntersectionObserver } from "@/composables/observer";
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, ref } from "vue";
 import type { Ref } from "vue";
-import { rejects } from "assert";
 
 const showCard2: Ref<boolean> = ref(false);
 const showCard3: Ref<boolean> = ref(false);
@@ -36,7 +35,6 @@ const createTimer = (time: number, showValue: Ref<boolean>) => {
 
 <template>
   <div id="theme-page" ref="pageDOM">
-    <!-- <button @click="flip = true">test</button> -->
     <h2 class="theme-title">年度最強合作 三大主題來襲</h2>
     <p class="theme-text">
       各路廠商強強聯手<br />
@@ -47,75 +45,63 @@ const createTimer = (time: number, showValue: Ref<boolean>) => {
       <div :class="['card','card1', { 'flip-card': showAnimation }]">
         <div class="front-card">
           <p class="card-text">Week 1</p>
-          <img
-            class="card-img"
-            src="@/assets/images/theme/locked.png"
-            alt="鎖頭圖"
-          />
+          <img class="card-img" src="@/assets/images/theme/locked.png" alt="鎖頭圖" />
         </div>
 
         <div v-if="showAnimation" class="back-card">
           <p class="back-card-tag"># 板塊設計</p>
           <h3 class="back-card-title">The F2E 活動網站設計</h3>
           <p class="back-card-theme">視覺滾動</p>
-          <img
-            class="back-card-img"
-            src="@/assets/images/theme/theme_card1.png"
-            alt=""
-          />
+          <img class="back-card-img" src="@/assets/images/theme/theme_card1.png" alt="卡片1" />
           <div class="back-card-container">
             <p class="back-card-text-week">Week 1</p>
-            <p class="back-card-text-detail">查看關卡細節</p>
+            <a class="back-card-text-detail" 
+               href="https://2022.thef2e.com/news/week1"
+               target="_blank">
+            查看關卡細節
+            </a>
           </div>
         </div>
       </div>
       <div :class="['card', { 'flip-card': showCard2 }]">
         <div class="front-card">
           <p class="card-text">Week 2</p>
-          <img
-            class="card-img"
-            src="@/assets/images/theme/locked.png"
-            alt="鎖頭圖"
-          />
+          <img class="card-img" src="@/assets/images/theme/locked.png" alt="鎖頭圖" />
         </div>
 
         <div v-if="showCard2" class="back-card">
           <p class="back-card-tag"># 凱鈿行動科技</p>
           <h3 class="back-card-title">今晚，我想來點點簽</h3>
           <p class="back-card-theme">CANVAS</p>
-          <img
-            class="back-card-img"
-            src="@/assets/images/theme/theme_card2.png"
-            alt=""
-          />
+          <img class="back-card-img" src="@/assets/images/theme/theme_card2.png" alt="卡片2" />
           <div class="back-card-container">
             <p class="back-card-text-week">Week 2</p>
-            <p class="back-card-text-detail">查看關卡細節</p>
+             <a class="back-card-text-detail" 
+               href="https://2022.thef2e.com/news/week2"
+               target="_blank">
+            查看關卡細節
+            </a>
           </div>
         </div>
       </div>
       <div :class="['card', { 'flip-card': showCard3 }]">
         <div class="front-card">
           <p class="card-text">Week 3</p>
-          <img
-            class="card-img"
-            src="@/assets/images/theme/locked.png"
-            alt="鎖頭圖"
-          />
+          <img class="card-img" src="@/assets/images/theme/locked.png" alt="鎖頭圖" />
         </div>
 
         <div v-if="showCard3" class="back-card">
           <p class="back-card-tag"># 鈦坦科技</p>
           <h3 class="back-card-title">Scrum 新手村</h3>
           <p class="back-card-theme">JS Draggable</p>
-          <img
-            class="back-card-img"
-            src="@/assets/images/theme/theme_card3.png"
-            alt=""
-          />
+          <img class="back-card-img" src="@/assets/images/theme/theme_card3.png" alt="卡片3" />
           <div class="back-card-container">
             <p class="back-card-text-week">Week 3</p>
-            <p class="back-card-text-detail">查看關卡細節</p>
+             <a class="back-card-text-detail" 
+               href="https://2022.thef2e.com/news/week3"
+               target="_blank">
+            查看關卡細節
+            </a>
           </div>
         </div>
       </div>
@@ -139,6 +125,19 @@ const createTimer = (time: number, showValue: Ref<boolean>) => {
     border: solid 4px #55ffad;
     padding: 1vh 2vw;
     line-height: 140%;
+    position: relative;
+    &::after {
+      @include size(10vh, 2vw);
+      position: absolute;
+      display: flex;
+      content: "";
+      background-image: url("@/assets/images/theme/light.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      right: -4vw;
+      top: -8vh;
+    }
   }
   > .theme-text {
     font-family: Noto Sans CJK;
@@ -261,6 +260,7 @@ const createTimer = (time: number, showValue: Ref<boolean>) => {
       color: #6e77e9;
       font-weight: 700;
       font-size: 0.6vw;
+      text-decoration: none;
       &::after {
         @include flex();
         content: "";
@@ -287,15 +287,15 @@ const createTimer = (time: number, showValue: Ref<boolean>) => {
   }
 }
 
-.card:hover {
-  -webkit-transform: rotateY(180deg);
-  -moz-transform: rotateY(180deg);
-  transform: rotateY(180deg);
-  > .front-card {
-    display: none !important;
-  }
-  > .back-crad {
-    display: flex !important;
-  }
-}
+// .card:hover {
+//   -webkit-transform: rotateY(180deg);
+//   -moz-transform: rotateY(180deg);
+//   transform: rotateY(180deg);
+//   > .front-card {
+//     display: none !important;
+//   }
+//   > .back-crad {
+//     display: flex !important;
+//   }
+// }
 </style>

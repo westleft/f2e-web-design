@@ -1,6 +1,3 @@
-<script setup lang="ts">
-</script>
-
 <template>
   <div id="sponsors">
     <h2 class="sponsors-title">SPONSORS</h2>
@@ -24,7 +21,7 @@
     </ul>
 
     <div id="footer">
-        <p class="footer-text">Copyright © 2022 HexSchool.All rights reserved.</p>
+      <p class="footer-text">Copyright © 2022 HexSchool.All rights reserved.</p>
     </div>
   </div>
 </template>
@@ -76,14 +73,14 @@
 }
 
 #footer {
-      @include flex();
-      padding: 4% 0;
-      background-color: #06102B;
-      width: 100vw;
-      > .footer-text {
-        font-family: Montserrat;
-        font-size: 1.2vw;
-        color: #fff;
-      }
+  @include flex();
+  padding: 4% 0;
+  background-color: #06102B;
+  width: 100vw;
+  > .footer-text {
+    font-family: Montserrat;
+    font-size: 1.2vw;
+    color: #fff;
+  }
 }
 </style>

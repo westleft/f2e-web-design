@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import type { Ref } from "vue";
 import { useIntersectionObserver } from "@/composables/observer";
+import { useThrottle } from "@/composables/throttle";
 const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
+const { throttle } = useThrottle();
 
+const scrollDOM: Ref = ref();
 const hideSlide = inject("hideSlide") as Ref<boolean>;
 
 const scrollable = ref(false);
@@ -14,36 +17,32 @@ const options = {
   threshold: 0.1,
 };
 
-
-const createTimer = (time: number, bool: boolean ) => {
-  let timer = setTimeout(() => {
-    scrollable.value = bool;
-    clearTimeout(timer);
-  }, time)
-}
-
-
 const activeCallback = () => {
   showAnimation.value = true;
-  createTimer(2000, true);
 };
 
-const leaveCallback = () => {
-  createTimer(100, false);
-};
+// 觸發最後一頁滾動
+const scrollActibeCallback = () => {
+  scrollable.value = true;
+}
+
+const scrollLeaveCallback = () => {
+  scrollable.value = false;
+}
 
 onMounted(() => {
-  const observer = createObserver(options, activeCallback, leaveCallback);
+  const observer = createObserver(options, activeCallback);
   observer.observe(pageDOM.value);
 
-  window.addEventListener("mousewheel", (event: any) => {
+  const scrollOobserver = createObserver(options, scrollActibeCallback, scrollLeaveCallback);
+  scrollOobserver.observe(scrollDOM.value);
+
+  window.addEventListener("mousewheel", throttle((event: any) => {
     if (event.wheelDelta < 0 && scrollable.value) {
       hideSlide.value = true;
     }
-  });
+  }, 1000));
 });
-
-
 
 </script>
 
@@ -120,17 +119,23 @@ onMounted(() => {
         </div>
       </div>
     </Transition>
+
+    <div id="scrollDOM" ref="scrollDOM"></div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+#scrollDOM {
+  position: absolute;
+  bottom: 0;
+}
 #bonus {
   @include size(100vh, 100vw);
   @include flex(center, flex-start);
   flex-direction: column;
   background-color: $color-bg;
   padding: 4% 24%;
-
+  position: relative;
   > .bonus-title {
     font-size: 2vw;
     font-weight: 700;

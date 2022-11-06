@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, } from "vue";
 import { useIntersectionObserver } from "@/composables/observer";
 const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 

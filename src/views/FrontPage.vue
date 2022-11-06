@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, onMounted, onUnmounted, ref } from "vue";
+import { onMounted, } from "vue";
 import { useIntersectionObserver } from "@/composables/observer";
 const { showAnimation, pageDOM, createObserver } = useIntersectionObserver();
 
@@ -18,9 +18,6 @@ onMounted(() => {
   observer.observe(pageDOM.value);
 });
 
-function qq(){
-  console.log('qq')
-}
 </script>
 
 <template>
